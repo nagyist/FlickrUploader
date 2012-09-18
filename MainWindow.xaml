@@ -1,0 +1,87 @@
+﻿<Window x:Class="FlickrUploader.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:l="clr-namespace:FlickrUploader"
+    Title="Window1" Height="500" Width="500">
+    <Grid>
+        <Grid.Resources>
+            <l:PTV x:Key="PTV"/>
+            <DataTemplate DataType="{x:Type l:JobCityInfo}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="City = "/><TextBlock Text="{Binding City}"/>
+                </StackPanel>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type l:JobUploadPhoto}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Uploading photo = "/><TextBlock Text="{Binding P.JustTheName}"/>
+                    </StackPanel>
+                    <Grid Visibility="{Binding Progress, Converter={StaticResource PTV}}">
+                        <Image Source="{Binding PhotoPath}" Height="100"/>
+                        <Rectangle VerticalAlignment="Top" Fill="White" Opacity="0.5" Height="{Binding Progress}"/>
+                        <Border BorderBrush="LightGreen" Opacity="0.7" Background="White" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Progress}"/><TextBlock Text="%"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type l:JobGetPhotosets}">
+                <TextBlock FontSize="20" Text="Getting photosets... please wait..."/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type l:JobUpdatePhotoWithPhotosetId}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="20" Text="Updating photosets of album "/>
+                    <TextBlock FontSize="20" Text="{Binding A.Name}"/>
+                </StackPanel>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Name="stackPanel1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.ColumnSpan="2">
+            <Button x:Name="Rescan" Width="75" Click="RescanDirs" Margin="0,0,5,0">Rescan</Button>
+            <Button Width="75" Click="TogglePauseButton" Margin="5,0,5 ,0">Pause</Button>
+            <Button Width="75" Click="CheckSets" Margin="5,0,0,0">Check Sets</Button>
+        </StackPanel>
+        <Grid Grid.Row="1" Grid.ColumnSpan="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Bottom" Text="{Binding Directories.TotalCount}"/><TextBlock VerticalAlignment="Bottom" Text=" files to upload."/>
+            </StackPanel>
+            <ListBox Grid.Row="1" ItemsSource="{Binding Directories}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding DI.FullName}"/>
+                            <TextBlock Text=" Files="/>
+                            <TextBlock Text="{Binding FileCount}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Current Job is "/>
+                <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentJob}"/>
+            </StackPanel>
+            <TextBox Grid.Row="1" Text="{Binding Log}" Height="150" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+            <ListBox Grid.Row="2" VerticalAlignment="Stretch" ItemsSource="{Binding WorkToDo}"/>
+        </Grid>
+    </Grid>
+</Window>
